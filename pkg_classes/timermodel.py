@@ -32,18 +32,14 @@ class TimerModel:
         the location topic for the device and an option mode for the switch.
     """
 
-    def __init__(self, logging_file, clock, matrix, day = 6, night = 21):
+    def __init__(self, logging_file, client, day = 6, night = 21):
         """ Initialize day, night, and LED devices. """
         logging.config.fileConfig(fname=logging_file, disable_existing_loggers=False)
         # Get the logger specified in the file
         self.logger = logging.getLogger(__name__)
-        self.bright_lights = 12
-        self.dim_lights = 0
+        self.client = client
         self.day = day
         self.night = night # 24 hour clock
-        # two LED devices from Adafruit
-        self.clock = clock
-        self.matrix = matrix
         # Turn on lights to bright
         self.lights_are_on = False
         self.control_lights("Turn On")
@@ -51,12 +47,12 @@ class TimerModel:
     def control_lights(self, switch):
         """ Dim lights at night or turn up during the day. """
         if switch == "Turn On":
-            self.clock.set_brightness(self.bright_lights)
-            self.matrix.set_state(DEMO_STATE)
+            client.publish("diy/system/silent", "OFF", 0, True)
+            client.publish("diy/system/demo", "ON", 0, True)
             self.lights_are_on = True
         else:
-            self.clock.set_brightness(self.dim_lights)
-            self.matrix.set_state(IDLE_STATE)
+            client.publish("diy/system/demo", "OFF", 0, True)
+            client.publish("diy/system/silent", "ON", 0, True)
             self.lights_are_on = False
 
     def check_for_timed_events(self,):

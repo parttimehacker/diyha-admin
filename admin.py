@@ -36,6 +36,7 @@ from pkg_classes.djangomodel import DjangoModel
 from pkg_classes.fanhal import FanHAL
 from pkg_classes.topicmodel import TopicModel
 from pkg_classes.whoview import WhoView
+from pkg_classes.timermodel import TimerModel
 
 # Start logging and enable imported classes to log appropriately.
 
@@ -230,6 +231,8 @@ if __name__ == '__main__':
 
     time.sleep(2) # let MQTT stuff initialize
     
+    TIMER = TimerModel(LOGGER, CLIENT)
+    
     # set the state of overall system at all diyha devices
     
     initialize_system_topics(CLIENT)
@@ -241,5 +244,6 @@ if __name__ == '__main__':
     # Loop forever waiting for motion
 
     while True:
-        time.sleep(2.0)
+        time.sleep(1.0)
+        TIMER.check_for_timed_events()
 
